@@ -24,6 +24,20 @@ const handleListen = () => {
 // app.listen(3000, handleListen);
 
 const server = http.createServer(app);
+
+// 브라우저 상의 websocket 연결
 const wss = new WebSocket.Server({ server });
+
+
+wss.on("connection", (socket)=>{
+    console.log("connected to client!!!");
+    socket.on("close", ()=>{
+        console.log('Disconnected from client');
+    });
+    socket.on("message", (message)=>{
+        console.log(message.toString('utf8'))
+    });
+    socket.send("hi");
+});
 
 server.listen(3000, handleListen);
