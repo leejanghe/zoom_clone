@@ -1,4 +1,6 @@
+import http from "http";
 import express from 'express';
+import WebSocket from "ws";
 
 const app = express();
 
@@ -18,5 +20,10 @@ app.get("/*", (req, res)=>{
 const handleListen = () => {
     console.log('Listening on port 3000');
 }
-app.listen(3000, handleListen);
+// ws는 Expree를 지원 안한다.
+// app.listen(3000, handleListen);
 
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+server.listen(3000, handleListen);
