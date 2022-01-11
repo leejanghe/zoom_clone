@@ -29,15 +29,32 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 
+// function onSocketMessage(message){
+//     console.log(message.toString())
+// }
+
+const sockets = [];
+
 wss.on("connection", (socket)=>{
+    sockets.push(socket);
+    socket['nickname'] = "Anonymous";
     console.log("connected to client!!!");
     socket.on("close", ()=>{
         console.log('Disconnected from client');
     });
-    socket.on("message", (message)=>{
-        console.log(message.toString('utf8'))
-    });
-    socket.send("hi");
+    socket.on("message", (msg)=>{
+        
+            const message = JSON.parse(msg.toString())
+            switch(message.type){
+            case "new_message":
+            sockets.forEach((aSocket)=> aSocket.send(`${socket.nickname} : ${message.payload}`));
+            break;
+
+            case "nickname":
+                socket['nickname'] = message.payload;
+            break;
+        }
+    })
 });
 
 server.listen(3000, handleListen);
